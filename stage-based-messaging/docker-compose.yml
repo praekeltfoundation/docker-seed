@@ -1,6 +1,7 @@
 version: '2'
 services:
   seed-stage-based-messaging:
+    image: praekeltfoundation/seed-stage-based-messaging
     build: .
     ports:
       - 8000:8000
@@ -10,6 +11,7 @@ services:
       - seed-postgres:postgres
 
   stage-based-messaging-celery:
+    image: praekeltfoundation/seed-stage-based-messaging
     build: .
     command: ["celery", "worker", "--app", "seed_stage_based_messaging", "--concurrency", "4", "--loglevel", "info", "-Q", "seed_stage_based_messaging"]
     environment:
@@ -20,6 +22,7 @@ services:
       - seed-rabbitmq:rabbitmq
 
   stage-based-messaging-celery-metrics:
+    image: praekeltfoundation/seed-stage-based-messaging
     build: .
     command: ["celery", "worker", "--app", "seed_stage_based_messaging", "--concurrency", "1", "--loglevel", "info", "-Q", "priority,mediumpriority,metrics,celery"]
     environment:
