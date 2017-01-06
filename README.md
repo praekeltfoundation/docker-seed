@@ -1,5 +1,6 @@
 # docker-seed
 
+[![pyup.io](https://pyup.io/repos/github/praekeltfoundation/docker-seed/shield.svg)](https://pyup.io/repos/github/praekeltfoundation/docker-seed/)
 [![Build Status](https://travis-ci.org/praekeltfoundation/docker-seed.svg?branch=master)](https://travis-ci.org/praekeltfoundation/docker-seed)
 
 Dockerfiles for the Seed maternal health platform
