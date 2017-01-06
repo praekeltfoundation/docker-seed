@@ -31,8 +31,6 @@ services:
 
   seed-postgres:
     image: postgres:9.6
-    ports:
-      - 5432:5432
     environment:
       - POSTGRES_DB=stage-based-messaging
       - POSTGRES_USER=stage-based-messaging
@@ -40,7 +38,6 @@ services:
   seed-rabbitmq:
     image: rabbitmq:3-management
     ports:
-      - 5672:5672
       - 15672:15672
     environment:
       - RABBITMQ_DEFAULT_VHOST=stage-based-messaging
