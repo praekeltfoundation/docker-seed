@@ -1,0 +1,26 @@
+sudo: required
+services:
+  - docker
+language: python
+
+env:
+  global:
+    - IMAGE_USER=praekeltfoundation
+    - REGISTRY_USER=praekeltorgdeploy
+    # - secure: TODO
+  matrix:
+    - COMPONENT=stage-based-messaging
+
+# Update Docker Engine
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -qy -o Dpkg::Options::="--force-confold" docker-engine
+
+before_script:
+  - version="$(sed -nE 's/\s*seed-'"$COMPONENT"'\s*==\s*([^\s\;]+).*/\1/p' "$COMPONENT"/requirements.txt)"
+  - image="$IMAGE_USER"/seed-"$COMPONENT":"$version"
+script:
+  - docker build --tag "$image" "$COMPONENT"
+  - (cd "$COMPONENT" && ./test.sh)
+after_script:
+  - docker images
