@@ -16,9 +16,6 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install -qy -o Dpkg::Options::="--force-confold" docker-engine
 
-install:
-  - pip install coverage flake8
-
 before_script:
   - image="$IMAGE_USER"/seed-"$COMPONENT"
   - version="$(sed -nE 's/\s*seed-'"$COMPONENT"'\s*==\s*([^\s\;]+).*/\1/p' "$COMPONENT"/requirements.txt)"
@@ -26,16 +23,14 @@ script:
   # Build and test Docker image
   - docker build --tag "$image" "$COMPONENT"
   - (cd "$COMPONENT" && ./test.sh)
-  # Test our deploy script
-  - coverage run --include=deploy.py ./test_deploy.py && coverage report -m
-  - flake8 .
 after_script:
   - docker images
 
 before_deploy:
+  - pip install docker-ci-deploy==0.2.0
   - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
 deploy:
   provider: script
-  script: ./deploy.py "$image" "$version" --latest
+  script: dcd --tag-version "$version" --tag-semver --tag-latest "$image"
   on:
     branch: master
