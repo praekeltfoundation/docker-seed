@@ -28,12 +28,12 @@ wait_for_celery_worker_start stage-based-messaging-celery-metrics
 
 QUEUES="$(rabbitmqctl_cmd list_queues -p stage-based-messaging)"
 
-echo "$QUEUES" | grep -E '^seed_stage_based_messaging\t'
+echo "$QUEUES" | grep -E '^seed_stage_based_messaging\s'
 
-echo "$QUEUES" | grep -E '^priority\t'
-echo "$QUEUES" | grep -E '^mediumpriority\t'
-echo "$QUEUES" | grep -E '^metrics\t'
-echo "$QUEUES" | grep -E '^celery\t'
+echo "$QUEUES" | grep -E '^priority\s'
+echo "$QUEUES" | grep -E '^mediumpriority\s'
+echo "$QUEUES" | grep -E '^metrics\s'
+echo "$QUEUES" | grep -E '^celery\s'
 
 set +x
 echo
