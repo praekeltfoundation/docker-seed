@@ -1,0 +1,34 @@
+version: '2'
+services:
+  stage-based-messaging:
+    image: praekeltfoundation/seed-stage-based-messaging
+    build: .
+    ports:
+      - '8000'
+    environment:
+      - STAGE_BASED_MESSAGING_DATABASE=postgres://stage-based-messaging:secret@postgres/stage-based-messaging
+      - BROKER_URL=amqp://stage-based-messaging:secret@rabbitmq:5672/stage-based-messaging
+
+  stage-based-messaging-celery:
+    extends:
+      service: stage-based-messaging
+    command: ["celery", "worker", "--app", "seed_stage_based_messaging", "--concurrency", "4", "--loglevel", "info", "-Q", "seed_stage_based_messaging"]
+
+  stage-based-messaging-celery-metrics:
+    extends:
+      service: stage-based-messaging
+    command: ["celery", "worker", "--app", "seed_stage_based_messaging", "--concurrency", "1", "--loglevel", "info", "-Q", "priority,mediumpriority,metrics,celery"]
+
+  postgres:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_DB=stage-based-messaging
+      - POSTGRES_USER=stage-based-messaging
+      - POSTGRES_PASSWORD=secret
+
+  rabbitmq:
+    image: rabbitmq:alpine
+    environment:
+      - RABBITMQ_DEFAULT_VHOST=stage-based-messaging
+      - RABBITMQ_DEFAULT_USER=stage-based-messaging
+      - RABBITMQ_DEFAULT_PASS=secret

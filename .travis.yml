@@ -1,0 +1,37 @@
+sudo: required
+services:
+  - docker
+language: python
+
+env:
+  global:
+    - IMAGE_USER=praekeltfoundation
+    - REGISTRY_USER=praekeltorgdeploy
+    - secure: "PJ9BT/dmSGyQU/VUUa7XWQZr0owsHn03gDMvLn0AY318ibuiRmrEoLs8XbwtAFzJOn/P/lu2eohzpxKCiDxK5ODKpR+ZZXlZe6xnHnUx1/wcGvnKJpmQpyX1PdU7J8b/WhX4uIMPOTd1hC1EliN8VXVc+VC9gN5fmU5VV6VXOJXrV0rBXlGxQMkj3OjAfqbF+vCTwscJ9lfbgmZ8h2NQuP6wofpGO44qb3/2OmBbkAj2MLzsVhk6iSQQi3MU1NzTzDJnolFNNp3WXi/MClQhHv8z0L/z24wGM8fnUhG7UXEtyRLjaAELr1+unW4Tk17lySQUJEZgWeQ4sLw10dcGGejDnsYW8w6SxChPb4ln8MRE2gkmXusRMnaPYoFerGguQ4Ju0PJh7XYkGGKl1jGzqz3SIsAbjB8s5Mj3JOy4UnNI59EUalcK7X2vcu1Dxp1pFQ2fH8rtY3t0YD2fz1My2zJCaehhYonjlHICPEXlmSIrHHz+t5JXNeCBDv1O5EecUsEa3uOZh0qP5hklu/2x5iWmpb+bSMqFsdplvvgdnF4Y80F1pUFQYpSMfX94cP/yAcJmST+ALVQgaErgqFhMk8bcvNK6EDiPKIAsslFMnEg8+ETu9ILJDoFlUOTmX5k1shYdncBbqmJC2ziebT6aVPdNKznSTkqkXpN+mXYcQw4="
+  matrix:
+    - COMPONENT=stage-based-messaging
+
+# Update Docker Engine
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -qy -o Dpkg::Options::="--force-confold" docker-engine
+
+before_script:
+  - image="$IMAGE_USER"/seed-"$COMPONENT"
+  - version="$(sed -nE 's/\s*seed-'"$COMPONENT"'\s*==\s*([^\s\;]+).*/\1/p' "$COMPONENT"/requirements.txt)"
+  - docker pull "$image" || true
+script:
+  # Build and test Docker image
+  - docker build --pull --cache-from "$image" --tag "$image" "$COMPONENT"
+  - (cd "$COMPONENT" && ./test.sh)
+after_script:
+  - docker images
+
+before_deploy:
+  - pip install docker-ci-deploy==0.2.0
+  - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+deploy:
+  provider: script
+  script: dcd --tag-version "$version" --tag-semver --tag-latest "$image"
+  on:
+    branch: master
