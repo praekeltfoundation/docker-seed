@@ -1,0 +1,45 @@
+version: '2'
+services:
+  scheduler:
+    image: praekeltfoundation/seed-scheduler
+    build: .
+    ports:
+      - '8000'
+    environment:
+      - SCHEDULER_DATABASE=postgres://scheduler:secret@postgres/scheduler
+      - BROKER_URL=amqp://scheduler:secret@rabbitmq:5672/scheduler
+
+  # Copied Celery config from MomConnect setup as of 09/03/17
+  scheduler-celery-beat:
+    extends:
+      service: scheduler
+    command: [celery, beat, --app, seed_scheduler, --loglevel, info]
+
+  scheduler-celery:
+    extends:
+      service: scheduler
+    command: [celery, worker, --app, seed_scheduler, -Q, 'seed_scheduler,priority,mediumpriority,celery', --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
+
+  scheduler-celery-metrics:
+    extends:
+      service: scheduler
+    command: [celery, worker, --app, seed_scheduler, -Q, metrics, --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
+
+  scheduler-celery-send:
+    extends:
+      service: scheduler
+    command: [celery, worker, --app, seed_scheduler, -Q, lowpriority, --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
+
+  postgres:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_DB=scheduler
+      - POSTGRES_USER=scheduler
+      - POSTGRES_PASSWORD=secret
+
+  rabbitmq:
+    image: rabbitmq:alpine
+    environment:
+      - RABBITMQ_DEFAULT_VHOST=scheduler
+      - RABBITMQ_DEFAULT_USER=scheduler
+      - RABBITMQ_DEFAULT_PASS=secret
