@@ -1,2 +1,3 @@
 requirements:
+  - message-sender/requirements.txt
   - stage-based-messaging/requirements.txt
