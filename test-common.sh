@@ -21,6 +21,11 @@ function wait_for_log_line() {
   timeout "$log_timeout" grep -m 1 -E "$log_pattern" <(docker-compose logs -f "$service" 2>&1)
 }
 
+function check_service_up() {
+  local service="$1"; shift
+  docker-compose ps "$service" | fgrep 'Up'
+}
+
 function start_and_wait_for_infrastructure() {
   local db_service="${1:-postgres}"
   local amqp_service="${2:-rabbitmq}"
@@ -29,21 +34,27 @@ function start_and_wait_for_infrastructure() {
 
   wait_for_log_line "$db_service" 'database system is ready to accept connections'
   wait_for_log_line "$amqp_service" 'Server startup complete'
+
+  check_service_up "$db_service"
+  check_service_up "$amqp_service"
 }
 
 function wait_for_gunicorn_start() {
   local gunicorn_service="$1"; shift
   wait_for_log_line "$gunicorn_service" 'Booting worker'
+  check_service_up "$gunicorn_service"
 }
 
 function wait_for_celery_worker_start() {
   local worker_service="$1"; shift
   wait_for_log_line "$worker_service" 'celery@\w+ ready'
+  check_service_up "$worker_service"
 }
 
 function wait_for_celery_beat_start() {
   local beat_service="$1"; shift
   wait_for_log_line "$beat_service" 'beat: Starting\.\.\.'
+  check_service_up "$beat_service"
 }
 
 function get_service_local_address() {
