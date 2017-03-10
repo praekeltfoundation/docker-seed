@@ -65,7 +65,7 @@ function get_service_local_address() {
 
 # Assumes RabbitMQ service is named 'rabbitmq'
 function rabbitmqctl_cmd() {
-  docker-compose exec rabbitmq rabbitmqctl "$@"
+  docker-compose exec rabbitmq rabbitmqctl -q "$@"
 }
 
 # Assumes PostgreSQL service is named 'postgres'
