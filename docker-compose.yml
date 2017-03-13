@@ -1,0 +1,46 @@
+version: '2'
+services:
+  django:
+    image: $IMAGE
+    build:
+      context: $BUILD_CONTEXT
+    ports:
+      - '8000'
+    environment:
+      - ${DATABASE_ENV}=postgres://user:password@postgres/db
+      - BROKER_URL=amqp://user:password@rabbitmq:5672//vhost
+
+  # Copied Celery config from MomConnect setup as of 10/03/17
+  celery-beat:
+    extends:
+      service: django
+    command: [celery, beat, --app, $CELERY_APP, --loglevel, info]
+
+  celery-worker:
+    extends:
+      service: django
+    command: [celery, worker, --app, $CELERY_APP, -Q, '${CELERY_QUEUE_APP},priority,mediumpriority,celery', --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
+
+  celery-worker-metrics:
+    extends:
+      service: django
+    command: [celery, worker, --app, $CELERY_APP, -Q, metrics, --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
+
+  celery-worker-send:
+    extends:
+      service: django
+    command: [celery, worker, --app, $CELERY_APP, -Q, lowpriority, --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
+
+  postgres:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+
+  rabbitmq:
+    image: rabbitmq:alpine
+    environment:
+      - RABBITMQ_DEFAULT_VHOST=/vhost
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
