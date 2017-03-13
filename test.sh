@@ -71,9 +71,9 @@ wait_for_gunicorn_start django
 curl -sfL "$(get_service_local_address django)"/admin | fgrep '<title>Log in | Django site admin</title>'
 
 # Check the database tables were created
-[[ $(psql_cmd -q --dbname db -c \
-  "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public';" \
-    | grep -E '^\s*[[:digit:]]+' | tr -d ' ') > 0 ]]
+[[ $(psql_cmd -q -t -A --dbname db -c \
+  "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public';") \
+    > 0 ]]
 
 
 # Celery tests
