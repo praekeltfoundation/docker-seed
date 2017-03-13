@@ -44,7 +44,7 @@ CLASS_NAME="$(echo "$COMPONENT" | tr '-' '_')" # seed-message-sender -> seed_mes
 SHORT_NAME="${PACKAGE#seed-}"                  # seed-message-sender -> message-sender
 SHORT_CLASS_NAME="${CLASS_NAME#seed_}"         # seed_message_sender -> message_sender
 
-export IMAGE="$IMAGE"
+export IMAGE
 export BUILD_CONTEXT="${BUILD_CONTEXT:-$SHORT_NAME}"
 
 export DATABASE_ENV="${DATABASE_ENV_NAME:-${SHORT_CLASS_NAME^^}_DATABASE}"
