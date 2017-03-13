@@ -89,6 +89,9 @@ if [[ "$CELERY_WORKER" = 'YES' ]]; then
   wait_for_celery_worker_start celery-worker
   QUEUES="$(rabbitmqctl_cmd list_queues -p /vhost)"
   echo "$QUEUES" | grep -E "^$CELERY_QUEUE_APP\s"
+  echo "$QUEUES" | grep -E '^priority\s'
+  echo "$QUEUES" | grep -E '^mediumpriority\s'
+  echo "$QUEUES" | grep -E '^celery\s'
 fi
 
 if [[ "$CELERY_WORKER_METRICS" = 'YES' ]]; then
