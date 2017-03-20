@@ -19,7 +19,7 @@ services:
   celery-worker:
     extends:
       service: django
-    command: [celery, worker, -Q, '${CELERY_QUEUE_APP},priority,mediumpriority,celery', --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
+    command: [celery, worker, -Q, '$CELERY_WORKER_QUEUE', --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
 
   celery-worker-metrics:
     extends:
