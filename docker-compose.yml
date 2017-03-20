@@ -14,22 +14,22 @@ services:
   celery-beat:
     extends:
       service: django
-    command: [celery, beat, --app, $CELERY_APP, --loglevel, info]
+    command: [celery, beat, --loglevel, info]
 
   celery-worker:
     extends:
       service: django
-    command: [celery, worker, --app, $CELERY_APP, -Q, '${CELERY_QUEUE_APP},priority,mediumpriority,celery', --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
+    command: [celery, worker, -Q, '${CELERY_QUEUE_APP},priority,mediumpriority,celery', --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
 
   celery-worker-metrics:
     extends:
       service: django
-    command: [celery, worker, --app, $CELERY_APP, -Q, metrics, --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
+    command: [celery, worker, -Q, metrics, --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
 
   celery-worker-send:
     extends:
       service: django
-    command: [celery, worker, --app, $CELERY_APP, -Q, lowpriority, --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
+    command: [celery, worker, -Q, lowpriority, --concurrency, '1', --without-gossip, --without-mingle, --without-heartbeat, --loglevel, info]
 
   postgres:
     image: postgres:alpine
