@@ -9,9 +9,10 @@ env:
     - REGISTRY_USER=praekeltorgdeploy
     - secure: "PJ9BT/dmSGyQU/VUUa7XWQZr0owsHn03gDMvLn0AY318ibuiRmrEoLs8XbwtAFzJOn/P/lu2eohzpxKCiDxK5ODKpR+ZZXlZe6xnHnUx1/wcGvnKJpmQpyX1PdU7J8b/WhX4uIMPOTd1hC1EliN8VXVc+VC9gN5fmU5VV6VXOJXrV0rBXlGxQMkj3OjAfqbF+vCTwscJ9lfbgmZ8h2NQuP6wofpGO44qb3/2OmBbkAj2MLzsVhk6iSQQi3MU1NzTzDJnolFNNp3WXi/MClQhHv8z0L/z24wGM8fnUhG7UXEtyRLjaAELr1+unW4Tk17lySQUJEZgWeQ4sLw10dcGGejDnsYW8w6SxChPb4ln8MRE2gkmXusRMnaPYoFerGguQ4Ju0PJh7XYkGGKl1jGzqz3SIsAbjB8s5Mj3JOy4UnNI59EUalcK7X2vcu1Dxp1pFQ2fH8rtY3t0YD2fz1My2zJCaehhYonjlHICPEXlmSIrHHz+t5JXNeCBDv1O5EecUsEa3uOZh0qP5hklu/2x5iWmpb+bSMqFsdplvvgdnF4Y80F1pUFQYpSMfX94cP/yAcJmST+ALVQgaErgqFhMk8bcvNK6EDiPKIAsslFMnEg8+ETu9ILJDoFlUOTmX5k1shYdncBbqmJC2ziebT6aVPdNKznSTkqkXpN+mXYcQw4="
   matrix:
-    - COMPONENT=message-sender        TEST_ARGS=--no-beat
-    - COMPONENT=scheduler             TEST_ARGS=
-    - COMPONENT=stage-based-messaging TEST_ARGS=--no-beat
+    - COMPONENT=control-interface-service TEST_ARGS='--beat'                                DATABASE_ENV_NAME=SEED_CONTROL_INTERFACE_SERVICE_DATABASE CELERY_WORKER_QUEUE=mediumpriority,priority,metrics,seed_control_interface_service
+    - COMPONENT=message-sender            TEST_ARGS='--worker-metrics --worker-send'
+    - COMPONENT=scheduler                 TEST_ARGS='--worker-metrics --worker-send --beat'
+    - COMPONENT=stage-based-messaging     TEST_ARGS='--worker-metrics --worker-send'
 
 # Update Docker Engine
 before_install:

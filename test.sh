@@ -9,26 +9,26 @@ function usage() {
 IMAGE="$1"
 shift || { usage "$0" >&2; exit 1; }
 
-CELERY_BEAT="YES"
 CELERY_WORKER="YES"
-CELERY_WORKER_METRICS="YES"
-CELERY_WORKER_SEND="YES"
+CELERY_BEAT="NO"
+CELERY_WORKER_METRICS="NO"
+CELERY_WORKER_SEND="NO"
 
 while [[ $# > 0 ]]; do
   key="$1"; shift
 
   case "$key" in
-    --no-beat)
-      CELERY_BEAT="NO"
-      ;;
     --no-worker)
       CELERY_WORKER="NO"
       ;;
-    --no-worker-metrics)
-      CELERY_WORKER_METRICS="NO"
+    --beat)
+      CELERY_BEAT="YES"
       ;;
-    --no-worker-send)
-      CELERY_WORKER_SEND="NO"
+    --worker-metrics)
+      CELERY_WORKER_METRICS="YES"
+      ;;
+    --worker-send)
+      CELERY_WORKER_SEND="YES"
       ;;
     *)
       # Unknown option
@@ -39,17 +39,17 @@ while [[ $# > 0 ]]; do
 done
 
 # Export all the variables needed by the docker-compose file
-COMPONENT="${IMAGE##*/}"                       # praekeltfoundation/seed-message-sender -> seed-message-sender
-CLASS_NAME="$(echo "$COMPONENT" | tr '-' '_')" # seed-message-sender -> seed_message_sender
-SHORT_NAME="${PACKAGE#seed-}"                  # seed-message-sender -> message-sender
-SHORT_CLASS_NAME="${CLASS_NAME#seed_}"         # seed_message_sender -> message_sender
+COMPONENT="${IMAGE##*/}"               # praekeltfoundation/seed-message-sender -> seed-message-sender
+CLASS_NAME="${COMPONENT//-/_}"         # seed-message-sender -> seed_message_sender
+SHORT_NAME="${COMPONENT#seed-}"        # seed-message-sender -> message-sender
+SHORT_CLASS_NAME="${CLASS_NAME#seed_}" # seed_message_sender -> message_sender
 
 export IMAGE
 export BUILD_CONTEXT="${BUILD_CONTEXT:-$SHORT_NAME}"
 
 export DATABASE_ENV="${DATABASE_ENV_NAME:-${SHORT_CLASS_NAME^^}_DATABASE}"
 
-export CELERY_QUEUE_APP="${CELERY_QUEUE_APP:-$CLASS_NAME}"
+export CELERY_WORKER_QUEUE="${CELERY_WORKER_QUEUE:-$CLASS_NAME,priority,mediumpriority,celery}"
 
 # Test time
 source test-common.sh
@@ -87,10 +87,11 @@ if [[ "$CELERY_WORKER" = 'YES' ]]; then
   docker-compose up -d celery-worker
   wait_for_celery_worker_start celery-worker
   QUEUES="$(rabbitmqctl_cmd list_queues -p /vhost)"
-  echo "$QUEUES" | grep -E "^$CELERY_QUEUE_APP\s"
-  echo "$QUEUES" | grep -E '^priority\s'
-  echo "$QUEUES" | grep -E '^mediumpriority\s'
-  echo "$QUEUES" | grep -E '^celery\s'
+
+  IFS=',' read -ra EXPECTED_QUEUES <<< "$CELERY_WORKER_QUEUE"
+  for queue in "${EXPECTED_QUEUES[@]}"; do
+    echo "$QUEUES" | grep -E "^$queue\s"
+  done
 fi
 
 if [[ "$CELERY_WORKER_METRICS" = 'YES' ]]; then
