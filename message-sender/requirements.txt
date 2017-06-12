@@ -1,1 +1,1 @@
-seed-message-sender==0.9.15
+seed-message-sender==0.9.16
