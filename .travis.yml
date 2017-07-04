@@ -13,7 +13,7 @@ env:
     - COMPONENT=message-sender            TEST_ARGS='--worker-metrics --worker-send'
     - COMPONENT=scheduler                 TEST_ARGS='--worker-metrics --worker-send --beat'
     - COMPONENT=stage-based-messaging     TEST_ARGS='--worker-metrics --worker-send'
-    - COMPONENT=auth-api                  TEST_ARGS='--no-worker'                           DATABASE_ENV_NAME=SEED_AUTH_API_DATABASE
+    - COMPONENT=auth-api                  TEST_ARGS='--no-worker'
 
 before_script:
   - image="$IMAGE_USER"/seed-"$COMPONENT"

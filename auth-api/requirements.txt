@@ -1,1 +1,1 @@
-seed-auth-api==0.9.0
+seed-auth-api==0.9.1
