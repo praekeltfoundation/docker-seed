@@ -15,11 +15,6 @@ env:
     - COMPONENT=stage-based-messaging     TEST_ARGS='--worker-metrics --worker-send'
     - COMPONENT=auth-api                  TEST_ARGS='--no-worker'
 
-# Update Docker Engine
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install -qy -o Dpkg::Options::="--force-confold" docker-engine
-
 before_script:
   - image="$IMAGE_USER"/seed-"$COMPONENT"
   - version="$(sed -nE 's/\s*seed-'"$COMPONENT"'\s*==\s*([^\s\;]+).*/\1/p' "$COMPONENT"/requirements.txt)"
