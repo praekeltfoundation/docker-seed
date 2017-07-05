@@ -1,0 +1,1 @@
+seed-service-rating==0.9.0

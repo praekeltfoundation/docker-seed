@@ -14,6 +14,9 @@ env:
     - COMPONENT=scheduler                 TEST_ARGS='--worker-metrics --worker-send --beat'
     - COMPONENT=stage-based-messaging     TEST_ARGS='--worker-metrics --worker-send'
     - COMPONENT=auth-api                  TEST_ARGS='--no-worker'
+    - COMPONENT=control-interface         TEST_ARGS='--no-worker'                           DATABASE_ENV_NAME=SEED_CONTROL_INTERFACE_DATABASE
+    - COMPONENT=idenity-store             TEST_ARGS=''                                      DATABASE_ENV_NAME=IDENTITIES_DATABASE CELERY_WORKER_QUEUE=mediumpriority,priority,metrics,seed_identity_store
+    - COMPONENT=service-rating            TEST_ARGS=''                                      CELERY_WORKER_QUEUE=seed_service_rating,priority,mediumpriority,metrics,celery
 
 before_script:
   - image="$IMAGE_USER"/seed-"$COMPONENT"
