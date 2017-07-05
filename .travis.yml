@@ -13,11 +13,7 @@ env:
     - COMPONENT=message-sender            TEST_ARGS='--worker-metrics --worker-send'
     - COMPONENT=scheduler                 TEST_ARGS='--worker-metrics --worker-send --beat'
     - COMPONENT=stage-based-messaging     TEST_ARGS='--worker-metrics --worker-send'
-
-# Update Docker Engine
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install -qy -o Dpkg::Options::="--force-confold" docker-engine
+    - COMPONENT=auth-api                  TEST_ARGS='--no-worker'
 
 before_script:
   - image="$IMAGE_USER"/seed-"$COMPONENT"
