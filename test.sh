@@ -51,7 +51,7 @@ export DATABASE_ENV="${DATABASE_ENV_NAME:-${SHORT_CLASS_NAME^^}_DATABASE}"
 
 export CELERY_WORKER_QUEUE="${CELERY_WORKER_QUEUE:-$CLASS_NAME,priority,mediumpriority,celery}"
 
-export LOGIN_URL="${LOGIN_URL:-admin}"
+export LOGIN_PATH="${LOGIN_PATH:-admin}"
 export LOGIN_TITLE="${LOGIN_TITLE:-Log in | Django site admin}"
 
 # Test time
@@ -70,7 +70,7 @@ docker-compose up -d django
 wait_for_gunicorn_start django
 
 # Check that the Django admin page is accessible
-curl -sfL "$(get_service_local_address django)"/$LOGIN_URL | fgrep "$LOGIN_TITLE"
+curl -sfL "$(get_service_local_address django)"/$LOGIN_PATH | fgrep "$LOGIN_TITLE"
 
 # Check the database tables were created
 [[ $(psql_cmd -q -t -A --dbname db -c \
