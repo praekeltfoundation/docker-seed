@@ -1,1 +1,1 @@
-seed-control-interface==0.9.5
+seed-control-interface==0.9.6
