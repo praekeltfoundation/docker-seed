@@ -1,1 +1,1 @@
-seed-stage-based-messaging==0.9.18
+seed-stage-based-messaging==0.9.19
