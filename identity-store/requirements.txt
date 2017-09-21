@@ -1,1 +1,1 @@
-seed-identity-store==0.9.4
+seed-identity-store==0.9.5
