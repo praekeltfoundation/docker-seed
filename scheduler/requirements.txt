@@ -1,1 +1,1 @@
-seed-scheduler==0.9.8
+seed-scheduler==0.9.10
