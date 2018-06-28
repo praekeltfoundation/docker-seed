@@ -1,2 +1,2 @@
-seed-message-sender==0.9.25
+seed-message-sender==0.9.26
 gevent==1.2.2
