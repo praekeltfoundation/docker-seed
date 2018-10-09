@@ -1,4 +1,4 @@
-FROM praekeltfoundation/django-bootstrap:py3.7-stretch
+FROM praekeltfoundation/django-bootstrap:py3.6-stretch
 
 COPY requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
