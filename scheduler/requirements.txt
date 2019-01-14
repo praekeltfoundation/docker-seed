@@ -1,2 +1,2 @@
-seed-scheduler==0.9.12
+seed-scheduler==0.10.0
 gevent==1.2.2
