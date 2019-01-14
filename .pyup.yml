@@ -3,3 +3,7 @@ requirements:
   - message-sender/requirements.txt
   - scheduler/requirements.txt
   - stage-based-messaging/requirements.txt
+  - auth-api/requirements.txt
+  - control-interface/requirements.txt
+  - identity-store/requirements.txt
+  - service-rating/requirements.txt
