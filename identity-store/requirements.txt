@@ -1,2 +1,2 @@
-seed-identity-store==0.10.1
+seed-identity-store==0.10.2
 gevent==1.2.2
