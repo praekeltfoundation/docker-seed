@@ -1,1 +1,1 @@
-seed-control-interface-service==0.9.5
+seed-control-interface-service==0.9.7
