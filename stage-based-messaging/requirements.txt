@@ -1,2 +1,2 @@
-seed-stage-based-messaging==0.13.0
+seed-stage-based-messaging==0.13.1
 gevent==1.2.2
